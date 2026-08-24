@@ -1,48 +1,92 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+
+const views = [
+  { id: "all", label: "All files", count: "00" },
+  { id: "incoming", label: "Incoming", count: "—" },
+  { id: "archive", label: "Archive", count: "—" },
+] as const;
+
+const sheetSlots = ["A / 01", "A / 02", "B / 01", "B / 02"];
 
 export default function Home() {
+  const [view, setView] = useState<(typeof views)[number]["id"]>("all");
+  const selectedView = views.find((item) => item.id === view) ?? views[0];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Welcome
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            This project is part of a 101-project portfolio showcasing modern web development.
+    <main className="gallery-shell">
+      <header className="gallery-masthead">
+        <Link className="gallery-wordmark" href="/">
+          <span className="gallery-mark">AG</span>
+          <span>AI ART / GALLERY</span>
+        </Link>
+        <nav className="gallery-nav" aria-label="Gallery navigation">
+          <Link href="/more-projects">More projects</Link>
+          <a href="https://github.com/bookchaowalit-ai/bookchaowalit-ai-art-gallery-frontend" target="_blank" rel="noreferrer">Source ↗</a>
+        </nav>
+      </header>
+
+      <section className="gallery-hero">
+        <div className="hero-copy">
+          <p className="section-code">COLLECTION / 00 WORKS</p>
+          <h1>A gallery for images that have not arrived yet.</h1>
+          <p className="hero-note">
+            The gallery shell is ready. The current repository has no verified
+            artwork or connected generation feed, so the empty room stays visible.
           </p>
+          <div className="hero-links">
+            <a className="signal-link" href="https://github.com/bookchaowalit-ai/bookchaowalit-ai-art-gallery-frontend" target="_blank" rel="noreferrer">Follow the source ↗</a>
+            <span className="hero-caption">Last registry check · 24 AUG 2026</span>
+          </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              About This Project
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Built with Next.js 15, TypeScript, and Tailwind CSS.
-              Designed for performance, accessibility, and great user experience.
-            </p>
-          </div>
+        <aside className="gallery-register" aria-label="Collection register">
+          <div className="register-line"><span>Status</span><strong>UNCONNECTED</strong></div>
+          <div className="register-line"><span>Verified works</span><strong>00</strong></div>
+          <div className="register-line"><span>Generation feed</span><strong>NOT ON FILE</strong></div>
+          <p>Sample images are intentionally absent. A real work should earn its frame.</p>
+        </aside>
+      </section>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              Tech Stack
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Next.js 15</span>
-              <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm">TypeScript</span>
-              <span className="px-3 py-1 bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 rounded-full text-sm">Tailwind CSS</span>
-              <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-sm">Vercel</span>
+      <section className="gallery-sheet" aria-labelledby="sheet-title">
+        <div className="sheet-header">
+          <div>
+            <p className="section-code">CONTACT SHEET / INDEX</p>
+            <h2 id="sheet-title">Nothing filed in this edition.</h2>
+          </div>
+          <div className="sheet-filter" role="group" aria-label="Collection view">
+            {views.map((item) => (
+              <button key={item.id} type="button" aria-pressed={view === item.id} className={view === item.id ? "is-active" : ""} onClick={() => setView(item.id)}>
+                <span>{item.label}</span><b>{item.count}</b>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="sheet-grid" data-view={view}>
+          {sheetSlots.map((slot, index) => (
+            <div className="sheet-slot" key={slot}>
+              <div className="slot-frame" aria-hidden="true">
+                <span className="slot-cross">+</span>
+                <span className="slot-empty">NO IMAGE</span>
+                <span className="slot-corner">{String(index + 1).padStart(2, "0")}</span>
+              </div>
+              <div className="slot-label"><span>{slot}</span><span>EMPTY FRAME</span></div>
             </div>
-          </div>
+          ))}
         </div>
+        <p className="sheet-footnote" aria-live="polite">
+          Viewing <strong>{selectedView.label.toLowerCase()}</strong> · {selectedView.count === "00" ? "no verified files" : "no files in this view"}
+        </p>
+      </section>
 
-        <div className="text-center mt-12">
-          <Link href="https://github.com/bookchaowalit" className="text-blue-600 dark:text-blue-400 hover:underline">
-            View Source Code →
-          </Link>
-        </div>
-      </div>
-    </div>
+      <footer className="gallery-footer">
+        <span>bookchaowalit / AI domain</span>
+        <span>Built as a visible work in progress</span>
+        <Link href="https://bookchaowalit.com">Portfolio ↗</Link>
+      </footer>
+    </main>
   );
 }
