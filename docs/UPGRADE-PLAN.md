@@ -15,8 +15,6 @@ tests, and CI; still no actual artwork on file.
   on a remote source and add a typed loader for it.
 - Confirm the canonical domain and set `NEXT_PUBLIC_SITE_URL` (fallback is
   the Vercel project URL).
-- Add an Open Graph image (the previously referenced `/og-image.png` never
-  existed, so it was removed from metadata).
 
 ### P2
 - Lightbox/detail view per work with keyboard navigation.
@@ -32,3 +30,6 @@ tests, and CI; still no actual artwork on file.
   og-image reference removed; robots/sitemap generated in-app.
 - Data-driven, accessible `more-projects` page; external links announce new
   tabs; replaced create-next-app README.
+
+## Done in this pass (pass 2)
+- Generated `app/opengraph-image.tsx` social card (1200×630 PNG at build time, site palette) so `summary_large_image` has a real image. Twitter card upgraded from `summary`.

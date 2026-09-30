@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "en_US", url: "/", title: "AI Art / Gallery — bookchaowalit", description: "A visible gallery shell for an AI-art project in progress.", siteName: "AI Art / Gallery" },
-  twitter: { card: "summary", title: "AI Art / Gallery — bookchaowalit", description: "A visible gallery shell for an AI-art project in progress.", creator: "@bookchaowalit" },
+  twitter: { card: "summary_large_image", title: "AI Art / Gallery — bookchaowalit", description: "A visible gallery shell for an AI-art project in progress.", creator: "@bookchaowalit" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
