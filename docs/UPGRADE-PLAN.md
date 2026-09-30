@@ -33,3 +33,13 @@ tests, and CI; still no actual artwork on file.
 
 ## Done in this pass (pass 2)
 - Generated `app/opengraph-image.tsx` social card (1200×630 PNG at build time, site palette) so `summary_large_image` has a real image. Twitter card upgraded from `summary`.
+
+## Done in this pass (pass 3)
+- Edge-case pass on `lib/gallery.ts` (regression tests in `tests/gallery.test.ts`):
+  - `validateWork` accepted protocol-relative `//host/x.png` (and `/\host`)
+    as a "/public path", letting a work load from any host over any scheme.
+  - Alt text / provenance / title made only of zero-width characters or a BOM
+    passed the "required" checks; now stripped before checking.
+  - Duplicate detection compared raw ids, so `w1`, `﻿w1`, `W1​` and
+    NFD/NFC variants were all exhibited; ids now compare by a normalized key.
+  - `year` had no upper bound (`1e21` passed); `registerCount(NaN)` printed "NaN".

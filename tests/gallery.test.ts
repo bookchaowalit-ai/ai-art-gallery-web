@@ -47,3 +47,37 @@ describe("gallery registry", () => {
     assert.equal(exhibitableWorks(WORKS).length, WORKS.length);
   });
 });
+
+describe("gallery edge cases", () => {
+  it("rejects protocol-relative image URLs that would load from another host", () => {
+    assert.ok(validateWork({ ...base, imageUrl: "//evil.example/w1.png" }).length > 0);
+    assert.ok(validateWork({ ...base, imageUrl: "/\\evil.example/w1.png" }).length > 0);
+    assert.ok(validateWork({ ...base, imageUrl: "https://" }).length > 0);
+    assert.deepEqual(validateWork({ ...base, imageUrl: "https://cdn.example/w1.png" }), []);
+  });
+
+  it("treats zero-width-only alt text and provenance as missing", () => {
+    assert.ok(validateWork({ ...base, alt: "​﻿" }).includes("alt text is required"));
+    assert.ok(validateWork({ ...base, provenance: " ‍ " }).includes("provenance is required"));
+  });
+
+  it("rejects absurd years", () => {
+    assert.ok(validateWork({ ...base, year: 1e21 }).length > 0);
+  });
+
+  it("detects duplicate ids that differ only by invisible characters, case or normalization", () => {
+    const works = [
+      base,
+      { ...base, id: "﻿w1" },
+      { ...base, id: "W1​" },
+      { ...base, id: "café" },
+      { ...base, id: "café" },
+    ];
+    assert.deepEqual(exhibitableWorks(works).map((w) => w.id), ["w1", "café"]);
+  });
+
+  it("never renders NaN or Infinity as a register count", () => {
+    assert.equal(registerCount(Number.NaN), "00");
+    assert.equal(registerCount(Number.POSITIVE_INFINITY), "00");
+  });
+});
