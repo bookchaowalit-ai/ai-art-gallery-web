@@ -86,3 +86,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gallery-signal)
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+.slot-frame--filled { place-items: stretch; }
+.slot-frame--filled::before, .slot-frame--filled::after { display: none; }
+.slot-frame--filled img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.slot-badge { position: absolute; top: 8px; left: 8px; padding: 3px 6px; background: var(--gallery-black); color: var(--gallery-signal); font: 10px/1 var(--font-dm-mono), monospace; letter-spacing: .08em; }
+.slot-provenance { margin: 6px 0 0; color: var(--gallery-muted); font: 10px/1.4 var(--font-dm-mono), monospace; }
+figure.sheet-slot { margin: 0; }

@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Art / Gallery
 
-## Getting Started
+An honest gallery shell for the bookchaowalit AI-art project. The page renders
+only works registered in `data/works.ts` that carry alt text and provenance;
+while the registry is empty it shows an intentional empty contact sheet
+instead of fake artwork.
 
-First, run the development server:
+## Features
+- Collection register and view filter (all / incoming / archive) with counts
+  derived from the registry.
+- Works flagged `synthetic: true` are labelled SYNTHETIC on the frame.
+- `/api/mcp` JSON-RPC endpoint with a `list_works` tool (read-only, same data
+  as the page).
+- `robots.txt` / `sitemap.xml` generated from `lib/site.ts`
+  (override with `NEXT_PUBLIC_SITE_URL`).
 
+## Adding a work
+Append an entry to `data/works.ts` (`id`, `title`, `artist`, `year`, `status`,
+`imageUrl` as https or a `/public` path, `alt`, `provenance`, `synthetic`).
+Entries failing `validateWork` in `lib/gallery.ts` are not exhibited, and the
+unit tests fail if the shipped registry contains one.
+
+## Run
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Checks (same as CI)
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```

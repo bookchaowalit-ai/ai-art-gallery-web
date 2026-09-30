@@ -1,75 +1,30 @@
-import { NextRequest } from 'next/server';
+import { WORKS } from "@/data/works";
+import { VIEWS, exhibitableWorks, filterWorks } from "@/lib/gallery";
+import type { ViewId } from "@/lib/gallery";
+import { ToolInputError, optionalString, respondToMcpRequest } from "@/lib/mcp";
+import type { McpTool } from "@/lib/mcp";
 
-export const runtime = 'edge';
+const SERVER = { name: "bookchaowalit-ai-art-gallery", version: "0.2.0" };
+const VIEW_IDS = VIEWS.map((view) => view.id) as string[];
 
-interface MCPRequest {
-  jsonrpc: '2.0';
-  id: number | string;
-  method: string;
-  params?: any;
+const TOOLS: McpTool[] = [
+  {
+    name: "list_works",
+    description:
+      "List verified works in the gallery registry (optionally filtered by view: all, incoming, archive). Returns an empty list while no work is on file.",
+    inputSchema: {
+      type: "object",
+      properties: { view: { type: "string", enum: VIEW_IDS } },
+    },
+    handler: (args) => {
+      const view = optionalString(args, "view") ?? "all";
+      if (!VIEW_IDS.includes(view)) throw new ToolInputError(`Unknown view "${view}".`);
+      const works = filterWorks(exhibitableWorks(WORKS), view as ViewId);
+      return { view, count: works.length, works };
+    },
+  },
+];
+
+export async function POST(request: Request) {
+  return respondToMcpRequest(request, SERVER, TOOLS);
 }
-
-interface MCPResponse {
-  jsonrpc: '2.0';
-  id: number | string;
-  result?: any;
-  error?: {
-    code: number;
-    message: string;
-  };
-}
-
-async function getData() {
-  return { message: 'Sample data' };
-}
-
-export async function POST(request: NextRequest) {
-  let requestId: number | string = 0;
-
-  try {
-    const body: MCPRequest = await request.json();
-    requestId = body.id;
-    const { method, params, id } = body;
-
-    let result: any = {};
-
-    switch (method) {
-      case 'initialize':
-        result = {
-          protocolVersion: '2024-11-05',
-          capabilities: { tools: {} },
-          serverInfo: { name: 'MCP Server', version: '1.0.0' }
-        };
-        break;
-
-      case 'tools/list':
-        result = {
-          tools: [
-            {
-              name: 'get_data',
-              description: 'Get sample data',
-              inputSchema: { type: 'object', properties: {} }
-            }
-          ]
-        };
-        break;
-
-      case 'tools/call':
-        result = await getData();
-        break;
-
-      default:
-        throw new Error(`Unknown method: ${method}`);
-    }
-
-    return Response.json({ jsonrpc: '2.0', id, result });
-
-  } catch (error) {
-    return Response.json({
-      jsonrpc: '2.0',
-      id: requestId,
-      error: { code: -32603, message: error instanceof Error ? error.message : 'Internal error' }
-    }, { status: 500 });
-  }
-}
-
