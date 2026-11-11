@@ -16,7 +16,7 @@ export default function Home() {
   const visibleWorks = filterWorks(collection, view);
 
   return (
-    <main className="gallery-shell">
+    <main id="main-content" className="gallery-shell">
       <header className="gallery-masthead">
         <Link className="gallery-wordmark" href="/">
           <span className="gallery-mark">AG</span>

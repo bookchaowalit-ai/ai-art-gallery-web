@@ -1,0 +1,8 @@
+{
+  "floor": "1.0.0",
+  "public": true,
+  "target": { "serve": ["npx", "next", "start", "-p", "4341"], "url": "http://127.0.0.1:4341/", "timeoutSeconds": 120 },
+  "routes": ["/", "/more-projects", { "path": "/no-such-page", "status": 404 }],
+  "widths": [320, 375, 390, 768, 1440],
+  "waivers": []
+}

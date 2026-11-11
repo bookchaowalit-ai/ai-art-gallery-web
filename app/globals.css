@@ -14,12 +14,24 @@
   --font-mono: var(--font-dm-mono);
 }
 
-* { box-sizing: border-box; }
-html { background: var(--gallery-black); }
-body { margin: 0; background: var(--gallery-black); color: var(--gallery-paper); font-family: system-ui, sans-serif; }
-a { color: inherit; }
-::selection { background: var(--gallery-signal); color: var(--gallery-black); }
-button:focus-visible, a:focus-visible { outline: 2px solid var(--gallery-signal); outline-offset: 4px; }
+/* Element defaults live in the base layer so Tailwind utilities (e.g. text-blue-700 on the
+ * light more-projects page) win over them; unlayered, `a { color: inherit }` beat every utility. */
+@layer base {
+  * { box-sizing: border-box; }
+  html { background: var(--gallery-black); }
+  body { margin: 0; background: var(--gallery-black); color: var(--gallery-paper); font-family: system-ui, sans-serif; }
+  a { color: inherit; }
+  ::selection { background: var(--gallery-signal); color: var(--gallery-black); }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--gallery-signal); outline-offset: 4px; }
+}
+
+/* ADR-0007 skip link: first Tab stop, hidden until focused. */
+.skip-link { position: fixed; z-index: 50; top: 8px; left: 8px; padding: 10px 14px; background: var(--gallery-signal); color: var(--gallery-black); font: 12px/1.2 var(--font-dm-mono), monospace; text-transform: uppercase; transform: translateY(-160%); }
+.skip-link:focus { transform: translateY(0); }
+
+/* ADR-0007 target size: inline text links get a 24 px tall hit area. */
+.gallery-nav a, .gallery-footer a, .signal-link { display: inline-flex; align-items: center; gap: .4em; min-height: 24px; }
+.gallery-wordmark { min-height: 24px; }
 
 .gallery-shell { min-height: 100vh; max-width: 1320px; margin: 0 auto; padding: 0 42px; background: var(--gallery-black); }
 .gallery-masthead, .gallery-footer { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--gallery-rule); font: 11px/1.2 var(--font-dm-mono), monospace; letter-spacing: .08em; text-transform: uppercase; }

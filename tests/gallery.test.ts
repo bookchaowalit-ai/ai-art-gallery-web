@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
-import { countWorks, exhibitableWorks, filterWorks, registerCount, validateWork } from "../lib/gallery.ts";
-import type { GalleryWork } from "../lib/gallery.ts";
-import { WORKS } from "../data/works.ts";
+import { describe, it } from "vitest";
+import { countWorks, exhibitableWorks, filterWorks, registerCount, validateWork } from "../lib/gallery";
+import type { GalleryWork } from "../lib/gallery";
+import { WORKS } from "../data/works";
 
 const base: GalleryWork = {
   id: "w1",

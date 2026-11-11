@@ -231,10 +231,10 @@ function categoryLabel(category: string) {
 
 export default function RelatedProjectsPage() {
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
+    <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <p className="mb-6">
-          <Link href="/" className="text-sm text-blue-700 underline dark:text-blue-300">
+          <Link href="/" className="inline-flex min-h-6 items-center text-sm text-blue-700 underline dark:text-blue-300">
             ← Back to the app
           </Link>
         </p>
