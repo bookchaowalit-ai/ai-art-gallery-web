@@ -85,8 +85,8 @@
 @media (max-width: 760px) {
   .gallery-shell { padding: 0 20px; }
   .gallery-masthead { min-height: 68px; align-items: flex-start; padding: 20px 0; }
-  .gallery-nav { gap: 12px; font-size: 10px; }
-  .gallery-wordmark { font-size: 10px; }
+  .gallery-nav { gap: 12px; font-size: 12px; }
+  .gallery-wordmark { font-size: 12px; }
   .gallery-hero { display: block; padding: 76px 0 80px; }
   .hero-copy h1 { font-size: clamp(50px, 16vw, 80px); }
   .gallery-register { margin-top: 68px; }
