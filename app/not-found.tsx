@@ -1,18 +1,18 @@
 import Link from "next/link";
+import { EmptyState, Reader, ReaderFoot, ReaderHead, ReaderTop } from "@/components/reader-shell";
+import { SOURCE_URL } from "@/lib/site";
 
 export default function NotFound() {
   return (
-    <main id="main-content" className="gallery-shell">
-      <section className="gallery-hero">
-        <div className="hero-copy">
-          <p className="section-code">404 / NOT ON FILE</p>
-          <h1>This room is not in the gallery.</h1>
-          <p className="hero-note">The link may have moved. The collection starts on the front page.</p>
-          <div className="hero-links">
-            <Link className="signal-link" href="/">Back to the gallery</Link>
-          </div>
-        </div>
-      </section>
-    </main>
+    <Reader>
+      <ReaderTop name="AI Art Gallery" tagline="Works with provenance" links={[{ href: SOURCE_URL, label: "Source" }]} />
+      <main id="main" className="rs-main">
+        <ReaderHead eyebrow="Page not found" title="This room is not in the gallery" lede="The link may have moved. The collection starts on the front page." />
+        <EmptyState title="Where to next" action={<Link className="rs-button" href="/">Back to the gallery</Link>}>
+          The front page lists every work on file.
+        </EmptyState>
+      </main>
+      <ReaderFoot source={SOURCE_URL} />
+    </Reader>
   );
 }

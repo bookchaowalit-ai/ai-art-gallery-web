@@ -5,10 +5,7 @@ import { describe, it, vi } from "vitest";
 
 // next/font/google and next/og only work inside a Next build: the layout needs the CSS variable
 // names and the social card needs the element tree it would rasterise.
-vi.mock("next/font/google", () => ({
-  Instrument_Serif: () => ({ variable: "font-serif-var" }),
-  DM_Mono: () => ({ variable: "font-mono-var" }),
-}));
+vi.mock("next/font/google", () => ({ Geist: () => ({ variable: "font-geist-var" }) }));
 vi.mock("next/og", () => ({
   ImageResponse: class {
     constructor(
@@ -20,13 +17,13 @@ vi.mock("next/og", () => ({
 
 import { POST } from "@/app/api/mcp/route";
 import RootLayout from "@/app/layout";
-import MoreProjects from "@/app/more-projects/page";
 import NotFound from "@/app/not-found";
 import OpenGraphImage, { alt, contentType, size } from "@/app/opengraph-image";
 import Home from "@/app/page";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, SOURCE_URL } from "@/lib/site";
+import nextConfig from "@/next.config";
 
 function mcpCall(body: unknown): Request {
   return new Request("https://example.test/api/mcp", {
@@ -70,36 +67,34 @@ describe("MCP route", () => {
 });
 
 describe("pages", () => {
-  it("home shows the empty room, every view and the register count", () => {
+  it("home is on the Reader shell: one h1, the empty room with a way on, hub and source links", () => {
     const html = renderToString(<Home />);
-    assert.match(html, /COLLECTION \/ (<!-- -->)?00(<!-- -->)? WORKS/);
-    assert.match(html, /A gallery for images that have not arrived yet\./);
-    for (const label of ["All files", "Incoming", "Archive"]) assert.ok(html.includes(label), label);
-    assert.equal(html.match(/<main/g)?.length, 1);
+    assert.equal(html.match(/<h1/g)?.length, 1);
+    assert.match(html, /A gallery waiting for its first work/);
+    assert.match(html, /No works on file yet/);
+    assert.ok(html.includes('class="rs-button" href="https://bookchaowalit.com/"'));
+    assert.ok(html.includes(`href="${SOURCE_URL}"`));
+    assert.ok(!html.includes("bookchaowalit-ai-art-gallery-frontend"));
+    assert.ok(!/AUG 2026/.test(html));
+    assert.equal(html.match(/<main id="main"/g)?.length, 1);
   });
 
-  it("more-projects renders one main landmark and links home", () => {
-    const html = renderToString(<MoreProjects />);
-    assert.equal(html.match(/<main/g)?.length, 1);
+  it("layout puts the Geist variable on <html>", () => {
+    const html = renderToString(<RootLayout><main /></RootLayout>);
+    assert.ok(html.startsWith('<html lang="en" class="font-geist-var"'));
+  });
+
+  it("not-found keeps the top bar and footer and links back to the gallery", () => {
+    const html = renderToString(<NotFound />);
+    assert.ok(html.includes('class="rs-top"'));
+    assert.ok(html.includes('class="rs-foot"'));
     assert.ok(html.includes('href="/"'));
+    assert.equal(html.match(/<h1/g)?.length, 1);
   });
 
-  it("layout sets the language and both font variables on the body", () => {
-    const html = renderToString(<RootLayout><main /></RootLayout>);
-    assert.ok(html.startsWith('<html lang="en"'));
-    assert.ok(html.includes('class="font-serif-var font-mono-var"'));
-  });
-
-  it("the skip link is the first element of the body and every page has its target", () => {
-    const html = renderToString(<RootLayout><main /></RootLayout>);
-    assert.match(html, /<body[^>]*><a class="skip-link" href="#main-content">/);
-    for (const page of [<Home key="home" />, <MoreProjects key="more" />, <NotFound key="404" />]) {
-      assert.equal(renderToString(page).match(/<main id="main-content"/g)?.length, 1);
-    }
-  });
-
-  it("not-found links back to the gallery", () => {
-    assert.ok(renderToString(<NotFound />).includes('href="/"'));
+  it("/more-projects redirects to the portfolio hub for good", async () => {
+    const redirects = await nextConfig.redirects!();
+    assert.deepEqual(redirects, [{ source: "/more-projects", destination: "https://bookchaowalit.com/", permanent: true }]);
   });
 
   it("the social card is 1200x630 PNG and names the gallery", () => {
@@ -119,8 +114,9 @@ describe("crawler files", () => {
     assert.equal(rules.sitemap, `${SITE_URL}/sitemap.xml`);
   });
 
-  it("sitemap lists home and more-projects on the canonical origin", () => {
-    assert.deepEqual(sitemap().map((entry) => entry.url), [SITE_URL, `${SITE_URL}/more-projects`]);
+  it("sitemap lists home on the canonical origin, which defaults to the site's own domain", () => {
+    assert.deepEqual(sitemap().map((entry) => entry.url), [SITE_URL]);
+    assert.equal(SITE_URL, "https://ai-art-gallery.bookchaowalit.com");
   });
 
   it("SITE_URL has no trailing slash and honours NEXT_PUBLIC_SITE_URL", async () => {

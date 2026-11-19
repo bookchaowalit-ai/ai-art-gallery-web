@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
-import { DM_Mono, Instrument_Serif } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
 
-const instrumentSerif = Instrument_Serif({ variable: "--font-instrument-serif", weight: "400", subsets: ["latin"] });
-const dmMono = DM_Mono({ variable: "--font-dm-mono", weight: ["400", "500"], subsets: ["latin"] });
+// The font variable sits on <html>: the Reader shell tokens live on :root and read it from there.
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+
+const description = "An AI art gallery where every work carries its provenance. No works are filed yet.";
 
 export const metadata: Metadata = {
-  title: "AI Art / Gallery — bookchaowalit",
-  description: "A visible gallery shell for an AI-art project in progress.",
+  title: "AI Art Gallery | Bookchaowalit",
+  description,
   keywords: ["AI art gallery", "bookchaowalit", "creative technology"],
-  authors: [{ name: "bookchaowalit", url: "https://bookchaowalit.com" }],
-  creator: "bookchaowalit",
+  authors: [{ name: "Bookchaowalit", url: "https://bookchaowalit.com" }],
+  creator: "Bookchaowalit",
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
-  openGraph: { type: "website", locale: "en_US", url: "/", title: "AI Art / Gallery — bookchaowalit", description: "A visible gallery shell for an AI-art project in progress.", siteName: "AI Art / Gallery" },
-  twitter: { card: "summary_large_image", title: "AI Art / Gallery — bookchaowalit", description: "A visible gallery shell for an AI-art project in progress.", creator: "@bookchaowalit" },
+  openGraph: { type: "website", locale: "en_US", url: "/", title: "AI Art Gallery | Bookchaowalit", description, siteName: "Bookchaowalit" },
+  twitter: { card: "summary_large_image", title: "AI Art Gallery | Bookchaowalit", description, creator: "@bookchaowalit" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={`${instrumentSerif.variable} ${dmMono.variable}`}><a className="skip-link" href="#main-content">Skip to main content</a>{children}</body></html>;
+  return (
+    <html lang="en" className={geistSans.variable}>
+      <body>{children}</body>
+    </html>
+  );
 }

@@ -30,7 +30,7 @@ portfolio cross-link. It runs as a standalone web repository.
 
 ## Capabilities and Constraints
 
-- The current homepage is a generic scaffold and does not render real art.
+- The homepage renders only registered works with provenance; the registry is empty, so it shows an empty state.
 - No gallery data, image assets, generation controls, accounts, or remote data
   contract are present in the inspected app.
 - Future UI must label any sample artwork or metrics as synthetic until a real

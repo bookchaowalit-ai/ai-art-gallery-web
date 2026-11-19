@@ -1,39 +1,24 @@
-# Design direction — Signal Gallery
+# Design direction: AI Art Gallery on the Reader shell
 
-## World
-
-An after-hours image archive: black exhibition walls, registration marks,
-contact-sheet geometry, and small curator notes. The page feels like a gallery
-that is ready for work without pretending that work has arrived.
+Since 2026-11-19 the gallery uses the shared Reader shell (`app/reader-shell.css`,
+`components/reader-shell.tsx`, `READER.md`), the calm, Apple-like look shared with the content
+sites. The old "Signal Gallery" theme (graphite walls, Instrument Serif, DM Mono, 10px labels) is gone.
 
 ## First viewport
 
-The first screen states the honest condition immediately: zero verified works on
-file. A large typographic title sits beside a numbered collection register, and
-the contact-sheet frame below is an empty but intentional surface rather than a
-fake artwork grid.
+The top bar (brand, Source, Bookchaowalit hub), then one h1 and a lede that states the honest
+condition: no works filed yet and no generation feed connected. While the registry is empty the
+next block is the empty state with two ways on: "See finished projects" (bookchaowalit.com) and
+"Follow the source". No fake frames, no hard-coded check dates.
 
-## Palette and material
+## Works
 
-- Graphite `#101112` and warm paper `#f2eee7` are the exhibition room.
-- Signal green `#b6f36b` marks active registration and focus.
-- Rust `#d6754e` marks a missing connection, never a success state.
-- Thin rules, crosshair marks, and crop guides carry the contact-sheet grammar.
+When works are filed: view chips (All files / Incoming / Archive, `aria-pressed`, with counts), a
+result count (`role="status"`), then a grid of cards: image (4:3, `loading="lazy"`, real alt text),
+title, artist and year, provenance, and a Synthetic label for generated samples. An empty view gets
+its own empty state with "Show all files".
 
-## Type
+## Floor
 
-`Instrument Serif` is the gallery voice for the title. `DM Mono` carries
-accession numbers, metadata, and state labels. Body copy stays in a restrained
-sans stack for reading comfort.
-
-## Interaction and states
-
-The collection filter is a small index control with visible pressed state. Empty,
-incoming, and archive views remain honest and explain what would populate them.
-Focus rings use the signal green and reduced motion removes the sheet reveal.
-
-## Responsive rules
-
-Desktop uses a two-column curator register and contact sheet. On narrow screens
-the register becomes a horizontal strip and the sheet keeps its marks legible
-as a single-column stack.
+Reader shell tokens only (light and dark); Geist via `next/font` on `<html>`; text >= 12px, controls
+>= 44px, 3px focus ring, forced-colors rules; the 404 page keeps the same top bar and footer.
