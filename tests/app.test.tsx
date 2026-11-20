@@ -114,9 +114,19 @@ describe("crawler files", () => {
     assert.equal(rules.sitemap, `${SITE_URL}/sitemap.xml`);
   });
 
-  it("sitemap lists home on the canonical origin, which defaults to the site's own domain", () => {
+  it("sitemap lists home on the canonical origin", () => {
     assert.deepEqual(sitemap().map((entry) => entry.url), [SITE_URL]);
-    assert.equal(SITE_URL, "https://ai-art-gallery.bookchaowalit.com");
+  });
+
+  it("SITE_URL defaults to the site's own domain when NEXT_PUBLIC_SITE_URL is unset", async () => {
+    vi.resetModules();
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", undefined);
+    try {
+      const { SITE_URL: fallback } = await import("@/lib/site");
+      assert.equal(fallback, "https://ai-art-gallery.bookchaowalit.com");
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("SITE_URL has no trailing slash and honours NEXT_PUBLIC_SITE_URL", async () => {

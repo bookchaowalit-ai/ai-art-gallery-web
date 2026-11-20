@@ -56,5 +56,12 @@ describe("GalleryView", () => {
     expect(host.querySelector(".rs-empty h3")?.textContent).toBe("Nothing in Archive yet");
     press([...host.querySelectorAll("button")].find((b) => b.textContent === "Show all files")!);
     expect(titles()).toEqual(["Work a"]);
+    expect(document.activeElement).toBe(chip("All files"));
+    expect(chip("All files").getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("keeps the work grid announced as a list in Safari/VoiceOver", () => {
+    act(() => root.render(<GalleryView works={[work("a", "incoming")]} />));
+    expect(host.querySelector(".ag-grid")?.getAttribute("role")).toBe("list");
   });
 });

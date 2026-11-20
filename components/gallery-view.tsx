@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EmptyState, ReaderHead, ResultCount, Tags } from "@/components/reader-shell";
 import { VIEWS, countWorks, filterWorks, type GalleryWork, type ViewId } from "@/lib/gallery";
 import { HUB_URL, SOURCE_URL } from "@/lib/site";
@@ -10,6 +10,15 @@ export function GalleryView({ works }: { works: readonly GalleryWork[] }) {
   const [view, setView] = useState<ViewId>("all");
   const shown = filterWorks(works, view);
   const label = VIEWS.find((item) => item.id === view)!.label;
+  const allChip = useRef<HTMLButtonElement>(null);
+  // "Show all files" unmounts itself when the view changes; once the new view is on screen, focus
+  // the "All files" chip so a keyboard user keeps their place next to the filters.
+  const focusAll = useRef(false);
+  useEffect(() => {
+    if (!focusAll.current) return;
+    focusAll.current = false;
+    allChip.current?.focus();
+  }, [view]);
 
   return (
     <>
@@ -43,7 +52,7 @@ export function GalleryView({ works }: { works: readonly GalleryWork[] }) {
               <ul>
                 {VIEWS.map((item) => (
                   <li key={item.id}>
-                    <button type="button" className="rs-chip" aria-pressed={view === item.id} onClick={() => setView(item.id)}>
+                    <button type="button" className="rs-chip" ref={item.id === "all" ? allChip : undefined} aria-pressed={view === item.id} onClick={() => setView(item.id)}>
                       {item.label}<small>{countWorks(works, item.id)}</small>
                     </button>
                   </li>
@@ -53,11 +62,11 @@ export function GalleryView({ works }: { works: readonly GalleryWork[] }) {
             <ResultCount shown={shown.length} total={works.length} noun="work" filter={view === "all" ? undefined : label} />
           </div>
           {shown.length === 0 ? (
-            <EmptyState title={`Nothing in ${label} yet`} headingLevel={3} action={<button type="button" className="rs-plain" onClick={() => setView("all")}>Show all files</button>}>
+            <EmptyState title={`Nothing in ${label} yet`} headingLevel={3} action={<button type="button" className="rs-plain" onClick={() => { focusAll.current = true; setView("all"); }}>Show all files</button>}>
               Other views have works; this one is empty for now.
             </EmptyState>
           ) : (
-            <ul className="ag-grid">
+            <ul className="ag-grid" role="list">
               {shown.map((work) => (
                 <li key={work.id}>
                   <figure className="ag-card">
