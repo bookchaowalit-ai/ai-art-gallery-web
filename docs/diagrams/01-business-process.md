@@ -9,7 +9,7 @@ Last reviewed: 2026-11-28 · commit `259866b`
 ```mermaid
 flowchart TD
   DEV["push or PR to main"] --> CI["CI: ci-node (lint, typecheck, test, build) + security + design-floor"]
-  CI -->|green| DEPLOY["deploy to host [ต้องยืนยัน]"]
+  DEV --> DEPLOY["deploy to host: no workflow in repo deploys, path unknown (Vercel Git or CLI) [ต้องยืนยัน]"]
   REG["data/works.ts WORKS (empty today)"] --> VALID["exhibitableWorks: validateWork + drop duplicate ids"]
   VALID -->|"alt, provenance, https or /public image, valid year"| COLL["collection"]
   VALID -->|"fails a check"| DROP["work not exhibited"]
@@ -23,7 +23,7 @@ flowchart TD
   RPC -->|"notification (no id)"| R202["202 no body"]
   RPC -->|"tools/call list_works(view)"| COLL
   RPC -->|"unknown view"| TOOLERR["result isError: Unknown view"]
-  PAGE -.->|"browser error"| SENTRY["Sentry only if NEXT_PUBLIC_SENTRY_DSN set"]
+  PAGE -.->|"browser error"| SENTRY["Sentry errors only, if NEXT_PUBLIC_SENTRY_DSN set; beforeSend drops request, user, breadcrumbs, extra, non-platform contexts and strips query strings"]
 ```
 
 Sources: `app/page.tsx`, `components/gallery-view.tsx`, `data/works.ts`, `lib/gallery.ts`, `lib/mcp.ts`, `app/api/mcp/route.ts`, `next.config.ts`, `app/robots.ts`, `app/sitemap.ts`, `app/opengraph-image.tsx`, `lib/site.ts`, `instrumentation-client.ts`, `.github/workflows/ci.yml`, `README.md`, `PRODUCT.md`, `docs/UPGRADE-PLAN.md`
