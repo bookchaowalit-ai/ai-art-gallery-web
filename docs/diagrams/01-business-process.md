@@ -9,14 +9,15 @@ Last reviewed: 2026-11-28 · commit `259866b`
 ```mermaid
 flowchart TD
   DEV["push or PR to main"] --> CI["CI: ci-node (lint, typecheck, test, build) + security + design-floor"]
-  DEV --> DEPLOY["deploy to host: no workflow in repo deploys, path unknown (Vercel Git or CLI) [ต้องยืนยัน]"]
+  DEPLOY["Vercel project bookchaowalit-ai-art-gallery-frontend at ai-art-gallery.bookchaowalit.com (vercel-projects.yaml); no workflow here deploys, what triggers a deploy (Git or CLI) and preview vs production [ต้องยืนยัน]"] --> PAGE
   REG["data/works.ts WORKS (empty today)"] --> VALID["exhibitableWorks: validateWork + drop duplicate ids"]
-  VALID -->|"alt, provenance, https or /public image, valid year"| COLL["collection"]
+  VALID -->|"alt, provenance, https or same-origin / image URL, valid year"| COLL["collection"]
   VALID -->|"fails a check"| DROP["work not exhibited"]
   VISITOR["visitor"] --> PAGE["/ page"]
   PAGE --> COLL
   COLL -->|"0 works"| EMPTY["empty state: links to bookchaowalit.com and source"]
   COLL -->|"1 or more"| VIEW["grid of cards + view chips all / incoming / archive (client filter, Synthetic label)"]
+  VIEW -->|"chosen view has none, e.g. Archive"| NONE["Nothing in this view yet + Show all files button"]
   VISITOR --> OLD["/more-projects"] -->|"308"| HUB["bookchaowalit.com"]
   AGENT["MCP client"] -->|"POST /api/mcp"| RPC["JSON-RPC handler"]
   RPC -->|"body not JSON"| E400["400 parse error"]
@@ -26,15 +27,15 @@ flowchart TD
   PAGE -.->|"browser error"| SENTRY["Sentry errors only, if NEXT_PUBLIC_SENTRY_DSN set; beforeSend drops request, user, breadcrumbs, extra, non-platform contexts and strips query strings"]
 ```
 
-Sources: `app/page.tsx`, `components/gallery-view.tsx`, `data/works.ts`, `lib/gallery.ts`, `lib/mcp.ts`, `app/api/mcp/route.ts`, `next.config.ts`, `app/robots.ts`, `app/sitemap.ts`, `app/opengraph-image.tsx`, `lib/site.ts`, `instrumentation-client.ts`, `.github/workflows/ci.yml`, `README.md`, `PRODUCT.md`, `docs/UPGRADE-PLAN.md`
+Sources: `app/page.tsx`, `components/gallery-view.tsx`, `data/works.ts`, `lib/gallery.ts`, `lib/mcp.ts`, `app/api/mcp/route.ts`, `next.config.ts`, `app/robots.ts`, `app/sitemap.ts`, `app/opengraph-image.tsx`, `lib/site.ts`, `instrumentation-client.ts`, `.github/workflows/ci.yml`, `README.md`, `PRODUCT.md`, `docs/UPGRADE-PLAN.md`, `repository-catalog/registries/vercel-projects.yaml` (bookchaowalit-empire)
 
 ข้อเท็จจริงสำคัญจากโค้ด:
 
 - `WORKS` เป็น array ว่างใน repo; ไม่มี loader จากแหล่งภายนอก ไม่มี API เขียน ไม่มี database
-- `validateWork` ปฏิเสธงานที่ไม่มี id/title/alt/provenance, imageUrl ที่ไม่ใช่ https หรือ path ใต้ `/public` (รวม `//host`), และปีนอก 1900–9999; id ซ้ำ (หลัง normalize) เหลืออันแรก
+- `validateWork` ปฏิเสธงานที่ไม่มี id/title/alt/provenance, imageUrl ที่ไม่ใช่ `https://...` หรือ path ในโดเมนเดียวกันที่ขึ้นต้นด้วย `/` (ไม่รับ `//host`); ไฟล์ใน `public/works/first.webp` ต้องใส่ `imageUrl` เป็น `/works/first.webp` ไม่ใช่ `/public/works/first.webp` และ `validateWork` ตรวจแค่รูปแบบ URL ไม่ตรวจว่าไฟล์มีจริง (`GalleryView` ส่งค่าให้ `<img>` ตรงๆ จึงอาจได้ 404), และปีนอก 1900–9999; id ซ้ำ (หลัง normalize) เหลืออันแรก
 - `robots.ts` อนุญาต `/` และห้าม `/api/`; `sitemap.ts` มีหน้าเดียว (`SITE_URL`) โดย `SITE_URL` มาจาก `NEXT_PUBLIC_SITE_URL` หรือค่า default `https://ai-art-gallery.bookchaowalit.com`
 - `/api/mcp` รับ POST เท่านั้น (ไม่มี GET handler ใน route)
-- ที่ deploy จริงและ project บน host ไม่อยู่ใน repo [ต้องยืนยัน]
+- ทะเบียน `bookchaowalit-empire/repository-catalog/registries/vercel-projects.yaml` ระบุ Vercel project `bookchaowalit-ai-art-gallery-frontend` และ URL `https://ai-art-gallery.bookchaowalit.com`; ตัวกระตุ้น deploy (Git หรือ CLI) และสถานะ production จริงไม่อยู่ใน repo [ต้องยืนยัน]; CI ไม่ได้ deploy
 
 ## To-Be (จาก docs/UPGRADE-PLAN.md)
 
